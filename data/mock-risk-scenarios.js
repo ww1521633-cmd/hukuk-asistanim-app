@@ -4,13 +4,19 @@ export const RISK_SCENARIOS = [
   // SCENARIO 1: Kira Anlaşmazlığı
   {
     id: '1',
-    code: 'KIRA_ANLASMAZLIK',
+    code: 'KIRA_RISK',
     name: 'Kira Anlaşmazlığı Risk Analizi',
     category: 'Kira Hukuku',
-    description: 'Kiracı veya mal sahibi olarak kira anlaşmazlığınızın hukuki risk seviyesini değerlendirin.',
+    description: 'Kiracı veya ev sahibi olarak yaşadığınız uyuşmazlığın hukuki riskini değerlendirin.',
     icon: 'Home',
-    estimatedTime: '5-7 dakika',
+    estimatedTime: '3-5 dakika',
     isActive: true,
+    
+    scoring: {
+      baseScore: 50,
+      thresholds: { low: 40, medium: 60, high: 80, critical: 90 }
+    },
+    
     questions: [
       {
         id: 'q1',

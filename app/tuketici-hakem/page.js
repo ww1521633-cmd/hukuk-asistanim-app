@@ -306,6 +306,9 @@ export default function TuketiciHakemPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-accent/5">
+      {/* First Visit Info Modal */}
+      <THHInfoModal showOnFirstVisit={true} />
+      
       {/* Top Navigation Bar */}
       <div className="bg-white border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 max-w-7xl">

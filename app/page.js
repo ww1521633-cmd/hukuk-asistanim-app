@@ -27,13 +27,30 @@ export default function HomePage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <Scale className="w-8 h-8 text-primary" />
               <span className="text-2xl font-bold text-primary">Hukuk Asistanım</span>
+            </Link>
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dashboard">
+                  Dashboard
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dilekce-olusturucu">
+                  Dilekçe
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/risk-analizi">
+                  Risk Analizi
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm">
+                Giriş Yap
+              </Button>
             </div>
-            <Button variant="outline" size="sm">
-              Giriş Yap
-            </Button>
           </div>
         </div>
       </header>

@@ -66,20 +66,22 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-16 bg-white/50">
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { icon: FileText, title: 'Dilekçe Oluşturucu', desc: 'Profesyonel dilekçeler hazırlayın', color: 'primary' },
-            { icon: AlertCircle, title: 'Risk Analizi', desc: 'Davanızı değerlendirin', color: 'accent' },
-            { icon: Scale, title: 'Tüketici Hakem', desc: 'THH başvurusu yapın', color: 'primary' },
-            { icon: Search, title: 'Yargıtay Kararları', desc: 'Emsal kararlar arayın', color: 'accent' }
+            { icon: FileText, title: 'Dilekçe Oluşturucu', desc: 'Profesyonel dilekçeler hazırlayın', color: 'primary', link: '/dilekce-olusturucu' },
+            { icon: AlertCircle, title: 'Risk Analizi', desc: 'Davanızı değerlendirin', color: 'accent', link: '/risk-analizi' },
+            { icon: Scale, title: 'Tüketici Hakem', desc: 'THH başvurusu yapın', color: 'primary', link: '#' },
+            { icon: Search, title: 'Yargıtay Kararları', desc: 'Emsal kararlar arayın', color: 'accent', link: '#' }
           ].map((feature, idx) => (
-            <Card key={idx} className="border-2 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <feature.icon className={`w-10 h-10 mb-2 ${feature.color === 'accent' ? 'text-accent' : 'text-primary'}`} />
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{feature.desc}</CardDescription>
-              </CardContent>
-            </Card>
+            <Link key={idx} href={feature.link}>
+              <Card className="border-2 hover:shadow-lg transition-shadow cursor-pointer hover:border-primary/50">
+                <CardHeader>
+                  <feature.icon className={`w-10 h-10 mb-2 ${feature.color === 'accent' ? 'text-accent' : 'text-primary'}`} />
+                  <CardTitle className="text-lg">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{feature.desc}</CardDescription>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>

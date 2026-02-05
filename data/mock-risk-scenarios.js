@@ -20,225 +20,146 @@ export const RISK_SCENARIOS = [
     questions: [
       {
         id: 'q1',
-        category: 'Sözleşme Durumu',
-        question: 'Kira sözleşmenizin mevcut durumu nedir?',
+        category: 'Sözleşme',
+        question: 'Kira sözleşmeniz hangi formatta?',
         type: 'single',
-        weight: 2.0,
-        isCritical: true,
-        helpText: 'Yazılı sözleşme olması hukuki güvenlik açısından önemlidir.',
+        weight: 1.5,
+        isCritical: false,
         options: [
-          {
-            id: 'a1',
-            label: 'Noterde onaylı yazılı sözleşme var',
-            riskDelta: -15,
-            explanation: 'En güçlü hukuki dayanak. Kanıtlanabilir ve bağlayıcı.',
-            tags: ['güvenli', 'resmi']
+          { 
+            id: 'a1', 
+            label: 'Noter onaylı yazılı sözleşme', 
+            riskDelta: -20, 
+            explanation: 'Noter onaylı sözleşmeler ispat gücü yüksektir.',
+            tags: ['güçlü_delil', 'resmi']
           },
-          {
-            id: 'a2',
-            label: 'Noter onaylı değil ama imzalı yazılı sözleşme var',
-            riskDelta: -5,
-            explanation: 'İyi bir delil ancak taraflardan biri inkâr edebilir.',
-            tags: ['orta-güvenlik']
+          { 
+            id: 'a2', 
+            label: 'Yazılı sözleşme (noter onaysız)', 
+            riskDelta: -10, 
+            explanation: 'Yazılı sözleşme var ama noter onayı yok.',
+            tags: ['yazılı_sözleşme']
           },
-          {
-            id: 'a3',
-            label: 'Sözlü anlaşma var, yazılı sözleşme yok',
-            riskDelta: +25,
-            explanation: 'İspat sorunu yaşanabilir. Tanık beyanı gerekebilir.',
-            tags: ['riskli', 'ispat-sorunu']
+          { 
+            id: 'a3', 
+            label: 'Sözlü sözleşme', 
+            riskDelta: +25, 
+            explanation: 'Sözlü sözleşmelerde ispat zorluğu yaşanabilir.',
+            tags: ['ispat_zorluğu', 'riskli']
           },
-          {
-            id: 'a4',
-            label: 'Hiçbir anlaşma belgesi yok',
-            riskDelta: +35,
-            explanation: 'Çok yüksek risk. Hukuki süreç uzun ve zor olabilir.',
-            tags: ['kritik', 'delil-yok']
+          { 
+            id: 'a4', 
+            label: 'Hiç sözleşme yok', 
+            riskDelta: +35, 
+            explanation: 'Sözleşme olmadan hak iddia etmek çok zordur!',
+            tags: ['sözleşmesiz', 'kritik']
           }
         ]
       },
       {
         id: 'q2',
-        category: 'Ödeme Geçmişi',
-        question: 'Kira ödemelerinizde gecikme veya eksiklik var mı?',
+        category: 'Ödeme',
+        question: 'Kira ödemelerini nasıl yapıyorsunuz?',
         type: 'single',
-        weight: 2.5,
+        weight: 2.0,
         isCritical: true,
-        helpText: 'Düzenli ödeme geçmişi tahliye davalarında kritik önem taşır.',
+        helpText: 'Ödeme şekliniz tahliye davalarında en kritik delildir.',
         options: [
-          {
-            id: 'b1',
-            label: 'Tüm ödemeler zamanında ve dekontla yapıldı',
-            riskDelta: -20,
-            explanation: 'Mükemmel. Havale dekontları sizi korur.',
-            tags: ['güvenli', 'delilli']
+          { 
+            id: 'b1', 
+            label: 'Banka havalesi/EFT (düzenli)', 
+            riskDelta: -15, 
+            explanation: 'Banka kayıtları güçlü delildir.',
+            tags: ['banka_kaydı', 'güvenli']
           },
-          {
-            id: 'b2',
-            label: 'Nakit ödedim ama makbuz aldım',
-            riskDelta: -5,
-            explanation: 'İyi ancak makbuzların geçerliliği tartışılabilir.',
-            tags: ['orta-güvenlik']
+          { 
+            id: 'b2', 
+            label: 'Nakit ödeme (makbuzlu)', 
+            riskDelta: +10, 
+            explanation: 'Makbuz var ama sahtecilik iddiası mümkün.',
+            tags: ['nakit', 'dikkat']
           },
-          {
-            id: 'b3',
-            label: '1-2 ay gecikme oldu ama sonra ödedim',
-            riskDelta: +15,
-            explanation: 'Tahliye gerekçesi olabilir. Açıklayıcı deliller gerekli.',
-            tags: ['riskli', 'gecikme']
-          },
-          {
-            id: 'b4',
-            label: '3 aydan fazla gecikme var veya hiç ödemedim',
-            riskDelta: +30,
-            explanation: 'Yüksek tahliye riski. Acil ödeme yapmalısınız.',
-            tags: ['kritik', 'tahliye-riski']
+          { 
+            id: 'b3', 
+            label: 'Nakit ödeme (makbuzsuz/elden)', 
+            riskDelta: +30, 
+            explanation: 'Makbuzsuz nakit ödeme ispatı çok zordur!',
+            tags: ['makbuzsuz', 'kritik']
           }
         ]
       },
       {
         id: 'q3',
-        category: 'İhtar ve Bildirimler',
-        question: 'Karşı taraftan resmi bir ihtar veya bildirim aldınız mı?',
+        category: 'Bildirim',
+        question: 'Tahliye tebligatı aldınız mı?',
         type: 'single',
-        weight: 2.0,
+        weight: 2.5,
         isCritical: true,
-        helpText: 'Noter ihtarı hukuki sürecin başladığını gösterir.',
+        helpText: 'Tebligat tarihi süre hesabı için çok önemlidir.',
         options: [
-          {
-            id: 'c1',
-            label: 'Hayır, herhangi bir resmi bildirim almadım',
-            riskDelta: 0,
-            explanation: 'Henüz resmi süreç başlamadı.',
-            tags: ['nötr']
+          { 
+            id: 'c1', 
+            label: 'Hayır, henüz tebligat almadım', 
+            riskDelta: 0, 
+            explanation: 'Tebligat yoksa tahliye süreci başlamamış.',
+            tags: ['tebligat_yok', 'nötr']
           },
-          {
-            id: 'c2',
-            label: 'Sözlü veya WhatsApp üzerinden uyarı aldım',
-            riskDelta: +10,
-            explanation: 'Gayri resmi uyarı. Yazılı yanıt verin.',
-            tags: ['dikkat']
+          { 
+            id: 'c2', 
+            label: 'Evet, 60+ gün önce aldım', 
+            riskDelta: +10, 
+            explanation: 'Süre geçmiş, tahliye davası açılmış olabilir.',
+            tags: ['süre_geçmiş', 'dikkat']
           },
-          {
-            id: 'c3',
-            label: 'Noter aracılığıyla ihtar aldım',
-            riskDelta: +20,
-            explanation: 'Hukuki süreç başladı. 30 gün içinde yanıt verin.',
-            tags: ['riskli', 'yasal-süreç']
+          { 
+            id: 'c3', 
+            label: 'Evet, 30-60 gün önce aldım', 
+            riskDelta: +25, 
+            explanation: 'Tahliye süreci devam ediyor, acil yardım gerekli.',
+            tags: ['acil', 'riskli']
           },
-          {
-            id: 'c4',
-            label: 'Mahkeme tebligatı veya dava dilekçesi aldım',
-            riskDelta: +35,
-            explanation: 'Acil avukat tutmalısınız. Cevap süresi işliyor.',
-            tags: ['kritik', 'dava']
+          { 
+            id: 'c4', 
+            label: 'Evet, 30 günden az önce aldım', 
+            riskDelta: +40, 
+            explanation: 'Kritik! İtiraz süresi dolmak üzere!',
+            tags: ['kritik', 'süre_daralması']
           }
         ]
       },
       {
         id: 'q4',
-        category: 'Sözleşme Şartları',
-        question: 'Sözleşmede kira artış oranı ve süresi net belirtilmiş mi?',
+        category: 'Ödeme Geçmişi',
+        question: 'Kirada ödeme gecikmeniz var mı?',
         type: 'single',
-        weight: 1.5,
-        isCritical: false,
-        helpText: 'Belirsiz şartlar anlaşmazlık yaratabilir.',
+        weight: 2.2,
+        isCritical: true,
         options: [
-          {
-            id: 'd1',
-            label: 'Evet, TÜFE/ÜFE artışı ve tarihler açıkça yazılı',
-            riskDelta: -10,
-            explanation: 'Net şartlar anlaşmazlık riskini azaltır.',
-            tags: ['güvenli']
+          { 
+            id: 'd1', 
+            label: 'Hayır, tüm ödemeler zamanında yapıldı', 
+            riskDelta: -18, 
+            explanation: 'Düzenli ödeme geçmişi en güçlü savunmadır.',
+            tags: ['güvenli', 'düzenli']
           },
-          {
-            id: 'd2',
-            label: 'Sadece genel bir ifade var ("piyasa şartlarına göre")',
-            riskDelta: +10,
-            explanation: 'Belirsizlik anlaşmazlık yaratabilir.',
-            tags: ['dikkat']
+          { 
+            id: 'd2', 
+            label: 'Evet, 1-2 ay gecikme oldu', 
+            riskDelta: +15, 
+            explanation: 'Kısa gecikme tahliye sebebi olabilir.',
+            tags: ['gecikme', 'dikkat']
           },
-          {
-            id: 'd3',
-            label: 'Sözleşmede artış maddesi yok',
-            riskDelta: +5,
-            explanation: 'Kanuni hükümler geçerli olur (TBK m.344).',
-            tags: ['nötr']
-          }
-        ]
-      },
-      {
-        id: 'q5',
-        category: 'Taşınmaz Durumu',
-        question: 'Kiralanan yerde hasar veya kullanım sorunları var mı?',
-        type: 'multiple',
-        weight: 1.8,
-        isCritical: false,
-        helpText: 'Birden fazla seçenek işaretleyebilirsiniz.',
-        options: [
-          {
-            id: 'e1',
-            label: 'Hayır, her şey normal kullanım halinde',
-            riskDelta: 0,
-            explanation: 'İyi durum.',
-            tags: ['nötr']
-          },
-          {
-            id: 'e2',
-            label: 'Su kaçağı, nem veya elektrik sorunları var',
-            riskDelta: +8,
-            explanation: 'Kira indirimi veya onarım talebi hakkınız var.',
-            tags: ['ayıp']
-          },
-          {
-            id: 'e3',
-            label: 'Komşularla gürültü/rahatsızlık problemi',
-            riskDelta: +5,
-            explanation: 'Kiracı sorumluluğu olabilir.',
-            tags: ['dikkat']
-          },
-          {
-            id: 'e4',
-            label: 'Yapısal hasar veya kullanılamaz alan var',
-            riskDelta: +15,
-            explanation: 'Ciddi ayıp. Fesih gerekçesi olabilir.',
-            tags: ['riskli']
-          }
-        ]
-      },
-      {
-        id: 'q6',
-        category: 'Hukuki Destek',
-        question: 'Bu süreçte bir avukata danıştınız mı?',
-        type: 'single',
-        weight: 1.2,
-        isCritical: false,
-        helpText: 'Avukat desteği hukuki riskleri azaltır.',
-        options: [
-          {
-            id: 'f1',
-            label: 'Evet, avukatım süreci takip ediyor',
-            riskDelta: -12,
-            explanation: 'Profesyonel destek riski önemli ölçüde azaltır.',
-            tags: ['güvenli']
-          },
-          {
-            id: 'f2',
-            label: 'Bir kez danıştım ama sürekli takip yok',
-            riskDelta: -5,
-            explanation: 'Kısmi destek. Gerekirse tekrar görüşün.',
-            tags: ['orta']
-          },
-          {
-            id: 'f3',
-            label: 'Hayır, henüz avukata gitmedim',
-            riskDelta: +10,
-            explanation: 'Hukuki destek almanız önerilir.',
-            tags: ['dikkat']
+          { 
+            id: 'd3', 
+            label: 'Evet, 3+ ay gecikme var', 
+            riskDelta: +35, 
+            explanation: 'Ciddi gecikme, tahliye riski çok yüksek!',
+            tags: ['kritik', 'tahliye_riski']
           }
         ]
       }
     ],
+    
     scoringConfig: {
       baseScore: 50,
       thresholds: {
@@ -248,61 +169,65 @@ export const RISK_SCENARIOS = [
         critical: [80, 100]
       }
     },
+    
     recommendations: {
       low: {
-        title: 'Düşük Risk - İyi Durumdasınız',
-        description: 'Hukuki pozisyonunuz güçlü. Mevcut durumunuzu korumaya devam edin.',
+        title: 'Düşük Risk - Güçlü Durum',
+        description: 'Hukuki durumunuz oldukça sağlam. Delilleriniz düzenli.',
         actions: [
-          'Tüm ödemeleri dekontla yapmaya devam edin',
-          'Sözleşme şartlarına uygun hareket edin',
-          'Karşı tarafla iyi iletişim kurun',
-          'Tüm yazışmaları ve belgeleri saklayın'
+          'Delillerinizi güvenli saklayın',
+          'Düzenli ödemeye devam edin',
+          'Tüm yazışmaları e-posta ile yapın',
+          'Makbuz ve dekontları arşivleyin'
         ],
-        color: 'green',
-        icon: 'CheckCircle2'
+        color: '#22c55e',
+        icon: 'CheckCircle2',
+        lawyerRecommended: false
       },
       medium: {
         title: 'Orta Risk - Dikkatli Olun',
-        description: 'Bazı riskler mevcut ancak yönetilebilir. Önlem almanız önerilir.',
+        description: 'Bazı eksiklikler var ama durum düzeltilebilir.',
         actions: [
-          'Varsa gecikmiş ödemeleri derhal yapın',
-          'Tüm iletişimi yazılı hale getirin (e-posta, noter)',
-          'Delil toplamaya başlayın (makbuz, fotoğraf, tanık)',
-          'Bir hukuk danışmanına görüş alın',
-          'Anlaşmazlıkları sulh yoluyla çözmeye çalışın'
+          'Eksik makbuzları tamamlayın',
+          'Banka ödemesine geçin',
+          'Ev sahibiyle yazılı iletişim kurun',
+          'Bir hukuk danışmanına danışabilirsiniz',
+          'Olası senaryolar için hazırlık yapın'
         ],
-        color: 'orange',
-        icon: 'AlertCircle'
+        color: '#eab308',
+        icon: 'AlertCircle',
+        lawyerRecommended: false
       },
       high: {
-        title: 'Yüksek Risk - Hukuki Destek Alın',
-        description: 'Ciddi hukuki riskler var. Profesyonel yardım almanız şiddetle önerilir.',
+        title: 'Yüksek Risk - Hukuki Yardım Gerekli',
+        description: 'Ciddi hukuki riskler mevcut. Profesyonel destek önerilir.',
         actions: [
-          'ACİL: Bir avukat tutun ve dosyayı inceletin',
-          'Tüm belgeleri toplayın (sözleşme, dekont, fotoğraf)',
-          'Karşı tarafa yazılı bildirim gönderin',
-          'Dava açılırsa savunmanızı hazırlayın',
-          'Alternatif çözüm yollarını (arabuluculuk) değerlendirin',
-          'Maddi durumunuzu güçlendirin (finansal plan)'
+          'ACİLEN avukatla görüşün',
+          'Tüm belgeleri toplayın (sözleşme, makbuz, fotoğraf)',
+          'Tanık bilgilerini not edin',
+          'İhtarname hazırlayın',
+          'Mahkeme sürecine hazırlanın',
+          'Alternatif konaklama planı yapın'
         ],
-        color: 'red',
-        icon: 'AlertTriangle'
+        color: '#f97316',
+        icon: 'AlertTriangle',
+        lawyerRecommended: true
       },
       critical: {
-        title: 'Kritik Risk - Acil Eylem Gerekli',
-        description: 'Çok yüksek hukuki risk. Derhal harekete geçmelisiniz.',
+        title: 'Kritik Risk - Acil Müdahale!',
+        description: 'Vakit daralıyor! Hemen harekete geçin!',
         actions: [
-          '⚠️ ACİL: Bugün bir avukatla görüşün',
-          'Mahkeme tebligatı varsa cevap süresine dikkat edin',
-          'Tüm delilleri acilen toplayın ve fotokopilerini alın',
-          'Tanıkların isim ve iletişim bilgilerini not edin',
-          'Mali durumunuzu gözden geçirin (harç, avukat ücreti)',
-          'Aile bireylerini bilgilendirin ve destek alın',
-          'Alternatif konaklama/çözüm planları yapın',
-          'Baro avukat listesinden ücretsiz danışmanlık alabilirsiniz'
+          '🚨 BUGÜN avukat bulun',
+          'İtiraz süresini kontrol edin',
+          'Tüm delilleri acilen toplayın',
+          'Mahkeme dosyasını inceleyin',
+          'Geçici koruma talebi değerlendirin',
+          'Baro avukatı listesinden ücretsiz yardım alın',
+          'Aile ve arkadaşlardan destek alın'
         ],
-        color: 'purple',
-        icon: 'ShieldAlert'
+        color: '#dc2626',
+        icon: 'ShieldAlert',
+        lawyerRecommended: true
       }
     }
   },

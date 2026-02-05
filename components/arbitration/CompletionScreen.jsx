@@ -3,12 +3,13 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Download, Home, FileText } from 'lucide-react';
+import { PDFDownloadButton } from './PDFDownloadButton';
 
 /**
  * Completion Screen Component
  * Success screen after submission
  */
-export function CompletionScreen({ applicationId, onNewApplication, onDownloadSummary }) {
+export function CompletionScreen({ applicationId, formData, onNewApplication, onDownloadSummary }) {
   const referenceNumber = applicationId || `THH-${Date.now().toString().slice(-8)}`;
 
   return (

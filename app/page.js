@@ -85,7 +85,7 @@ export default function HomePage() {
           {[
             { icon: FileText, title: 'Dilekçe Oluşturucu', desc: 'Profesyonel dilekçeler hazırlayın', color: 'primary', link: '/dilekce-olusturucu' },
             { icon: AlertCircle, title: 'Risk Analizi', desc: 'Davanızı değerlendirin', color: 'accent', link: '/risk-analizi' },
-            { icon: Scale, title: 'Tüketici Hakem', desc: 'THH başvurusu yapın', color: 'primary', link: '#' },
+            { icon: Scale, title: 'Tüketici Hakem', desc: 'THH başvurusu yapın (Ücretsiz)', color: 'primary', link: '/tuketici-hakem' },
             { icon: Search, title: 'Yargıtay Kararları', desc: 'Emsal kararlar arayın', color: 'accent', link: '#' }
           ].map((feature, idx) => (
             <Link key={idx} href={feature.link}>

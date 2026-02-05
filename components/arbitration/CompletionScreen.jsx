@@ -103,15 +103,23 @@ export function CompletionScreen({ applicationId, formData, onNewApplication, on
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <Button
-            onClick={onDownloadSummary}
-            variant="outline"
-            className="w-full gap-2"
-            size="lg"
-          >
-            <Download className="w-5 h-5" />
-            Başvuru Özetini İndir (PDF)
-          </Button>
+          {formData ? (
+            <PDFDownloadButton
+              formData={formData}
+              referenceNumber={referenceNumber}
+              className="w-full gap-2"
+            />
+          ) : (
+            <Button
+              onClick={onDownloadSummary}
+              variant="outline"
+              className="w-full gap-2"
+              size="lg"
+            >
+              <Download className="w-5 h-5" />
+              Başvuru Özetini İndir (PDF)
+            </Button>
+          )}
           <Button
             onClick={onNewApplication}
             className="w-full gap-2 bg-primary hover:bg-primary/90"

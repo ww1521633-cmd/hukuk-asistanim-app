@@ -293,6 +293,7 @@ export default function TuketiciHakemPage() {
     return (
       <CompletionScreen
         applicationId={applicationId}
+        formData={wizard.formData}
         onNewApplication={handleNewApplication}
         onDownloadSummary={handleDownloadSummary}
       />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { WIZARD_STEPS, validateStepData, getProgress as calculateProgress } from '@/data/mock-arbitration-wizard';
 
 const STORAGE_KEY = 'arbitration-draft';
@@ -15,6 +15,9 @@ export function useArbitrationWizard() {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  
+  // Track if initial load is complete to prevent overwriting
+  const isInitialized = useRef(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -23,19 +26,27 @@ export function useArbitrationWizard() {
       if (saved) {
         try {
           const data = JSON.parse(saved);
-          setFormData(data.formData || {});
-          setCurrentStep(data.currentStep || 0);
-          setCompletedSteps(data.completedSteps || []);
-          setIsCompleted(data.isCompleted || false);
+          // Only load if there's actual data
+          if (data.formData && Object.keys(data.formData).length > 0) {
+            setFormData(data.formData);
+            setCurrentStep(data.currentStep || 0);
+            setCompletedSteps(data.completedSteps || []);
+            setIsCompleted(data.isCompleted || false);
+          }
         } catch (e) {
           console.error('Failed to load saved draft:', e);
         }
       }
+      // Mark as initialized after load attempt
+      isInitialized.current = true;
     }
   }, []);
 
-  // Save to localStorage whenever state changes
+  // Save to localStorage whenever state changes (but only after initial load)
   useEffect(() => {
+    // Don't save until initial load is complete
+    if (!isInitialized.current) return;
+    
     if (typeof window !== 'undefined') {
       const dataToSave = {
         formData,

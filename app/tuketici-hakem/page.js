@@ -8,6 +8,7 @@ import { WizardContainer } from '@/components/arbitration/WizardContainer';
 import { StepContent } from '@/components/arbitration/StepContent';
 import { SummaryReview } from '@/components/arbitration/SummaryReview';
 import { CompletionScreen } from '@/components/arbitration/CompletionScreen';
+import { THHInfoModal } from '@/components/arbitration/THHInfoModal';
 import { Button } from '@/components/ui/button';
 import { 
   Tooltip, 

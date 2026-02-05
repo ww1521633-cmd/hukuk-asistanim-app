@@ -136,10 +136,6 @@ function RiskAnalysisWizardContent() {
     router.push('/risk-analizi');
   };
 
-  const handleDownloadReport = () => {
-    toast.info('Rapor indirme özelliği yakında eklenecek');
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -174,8 +170,9 @@ function RiskAnalysisWizardContent() {
           <RiskResult
             result={result}
             scenarioName={scenario.name}
+            answers={answers}
+            questions={scenario.questions}
             onStartNew={handleStartNew}
-            onDownloadReport={handleDownloadReport}
           />
         </div>
       </div>

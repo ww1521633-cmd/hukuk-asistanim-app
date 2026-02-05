@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { RiskGauge } from './RiskGauge';
+import { SuccessAnimation } from '@/components/shared/SuccessAnimation';
 import { 
   AlertTriangle, 
   CheckCircle2, 
@@ -14,16 +16,60 @@ import {
   Share2,
   FileText,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Loader2
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 /**
  * Risk Result Component
  * Displays final risk analysis results
  */
-export function RiskResult({ result, scenarioName, onStartNew, onDownloadReport }) {
+export function RiskResult({ result, scenarioName, answers, questions, onStartNew, onDownloadReport }) {
   const { riskScore, riskLevel, gaugeColor, recommendation, criticalFactors, advice } = result;
+  const [isClient, setIsClient] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // PDF Download function
+  const handleDownloadPDF = async () => {
+    if (!isClient) return;
+    
+    setIsGeneratingPDF(true);
+    try {
+      const { pdf } = await import('@react-pdf/renderer');
+      const { RiskPDFDocument } = await import('./RiskPDF');
+
+      const blob = await pdf(
+        <RiskPDFDocument
+          result={result}
+          scenarioName={scenarioName}
+          answers={answers}
+          questions={questions}
+        />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Risk-Analizi-${scenarioName.replace(/\s+/g, '-')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('PDF başarıyla indirildi!');
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      toast.error('PDF oluşturulurken bir hata oluştu');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   // Get risk level icon and color
   const getRiskIcon = () => {
@@ -88,7 +134,7 @@ export function RiskResult({ result, scenarioName, onStartNew, onDownloadReport 
 
   return (
     <div className="space-y-6">
-      {/* Header Card with Gauge */}
+      {/* Header Card with Gauge and Success Animation */}
       <Card className="border-2">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -101,6 +147,16 @@ export function RiskResult({ result, scenarioName, onStartNew, onDownloadReport 
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-6">
+            {/* Success Animation - shown briefly */}
+            <div className="mb-4">
+              <SuccessAnimation 
+                show={true} 
+                size={80} 
+                confettiEnabled={riskLevel === 'low'}
+                autoTrigger={true}
+              />
+            </div>
+            
             {/* Risk Gauge */}
             <RiskGauge score={riskScore} color={gaugeColor} size={220} strokeWidth={24} />
             
@@ -243,12 +299,24 @@ export function RiskResult({ result, scenarioName, onStartNew, onDownloadReport 
           <FileText className="w-4 h-4" />
           Yeni Analiz
         </Button>
-        {onDownloadReport && (
-          <Button variant="outline" onClick={onDownloadReport} className="gap-2">
-            <Download className="w-4 h-4" />
-            Rapor İndir
-          </Button>
-        )}
+        <Button 
+          variant="outline" 
+          onClick={handleDownloadPDF} 
+          disabled={isGeneratingPDF}
+          className="gap-2"
+        >
+          {isGeneratingPDF ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              PDF Oluşturuluyor...
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4" />
+              Rapor İndir (PDF)
+            </>
+          )}
+        </Button>
         <Button variant="outline" className="gap-2">
           <Share2 className="w-4 h-4" />
           Paylaş

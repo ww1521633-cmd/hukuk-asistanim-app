@@ -123,10 +123,73 @@ code {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Typography Utilities */
+@layer components {
+  .page-title {
+    @apply text-2xl md:text-3xl font-bold text-gray-900;
+  }
+  .section-title {
+    @apply text-xl font-semibold text-gray-800;
+  }
+  .card-title {
+    @apply text-lg font-medium text-gray-900;
+  }
+  .body-text {
+    @apply text-base text-gray-700 leading-relaxed;
+  }
+  .caption {
+    @apply text-sm text-gray-500;
+  }
+}
+
+/* Interactive States */
+@layer components {
+  .btn-interactive {
+    @apply hover:scale-[0.98] active:scale-95 transition-all duration-200;
+  }
+  .card-interactive {
+    @apply hover:shadow-lg transition-shadow duration-200 cursor-pointer;
+  }
+  .link-interactive {
+    @apply hover:text-primary transition-colors duration-200;
+  }
+  .input-focus {
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all;
+  }
+}
+
+/* Color Contrast & States */
+@layer components {
+  .input-error {
+    @apply border-red-500 focus:ring-red-500/20 text-red-900;
+  }
+  .input-success {
+    @apply border-green-500 focus:ring-green-500/20 text-green-900;
+  }
+  .input-disabled {
+    @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+  }
+}
+
+/* Skeleton Animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

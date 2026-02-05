@@ -2,23 +2,29 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Download, Home, FileText } from 'lucide-react';
+import { Download, Home, FileText } from 'lucide-react';
 import { PDFDownloadButton } from './PDFDownloadButton';
+import { SuccessAnimation } from '@/components/shared/SuccessAnimation';
 
 /**
  * Completion Screen Component
- * Success screen after submission
+ * Success screen after submission with celebratory animation
  */
 export function CompletionScreen({ applicationId, formData, onNewApplication, onDownloadSummary }) {
-  const referenceNumber = applicationId || `THH-${Date.now().toString().slice(-8)}`;
+  const referenceNumber = applicationId || 'THH-XXXXXXXX';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-accent/5 py-12">
       <div className="container mx-auto px-4 max-w-2xl">
-        {/* Success Animation */}
+        {/* Success Animation with Confetti */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-6 animate-bounce">
-            <CheckCircle2 className="w-12 h-12 text-green-600" />
+          <div className="mb-6">
+            <SuccessAnimation 
+              show={true} 
+              size={120} 
+              confettiEnabled={true}
+              autoTrigger={true}
+            />
           </div>
           <h1 className="text-3xl font-bold text-primary mb-2">
             Başvurunuz Alındı!

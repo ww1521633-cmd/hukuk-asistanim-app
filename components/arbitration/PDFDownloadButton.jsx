@@ -1,44 +1,28 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, Loader2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
-
-// Dynamically import PDF components (they only work on client-side)
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-);
-
-const ArbitrationPDFDocument = dynamic(
-  () => import('./ArbitrationPDF').then((mod) => mod.ArbitrationPDFDocument),
-  { ssr: false }
-);
 
 /**
  * PDF Download Button Component
- * Handles dynamic loading and generation of PDF
+ * Uses @react-pdf/renderer with proper client-side only rendering
  */
 export function PDFDownloadButton({ formData, referenceNumber, applicantInfo, className }) {
-  const [isReady, setIsReady] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [pdfBlob, setPdfBlob] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handleClick = () => {
-    if (!isReady) {
-      setIsGenerating(true);
-      // Trigger PDF generation
-      setTimeout(() => {
-        setIsReady(true);
-        setIsGenerating(false);
-      }, 100);
-    }
-  };
+  // Ensure we're on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const fileName = `THH-Basvuru-${referenceNumber || 'Ozet'}.pdf`;
 
-  // Mock applicant info if not provided (will be replaced with Clerk data later)
+  // Mock applicant info if not provided
   const defaultApplicantInfo = applicantInfo || {
     fullName: 'Başvuru Sahibi',
     tcNo: '***********',
@@ -47,69 +31,76 @@ export function PDFDownloadButton({ formData, referenceNumber, applicantInfo, cl
     email: '(Sistemde kayıtlı e-posta)'
   };
 
-  if (!isReady) {
-    return (
-      <Button
-        variant="outline"
-        onClick={handleClick}
-        disabled={isGenerating}
-        className={className}
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            PDF Hazırlanıyor...
-          </>
-        ) : (
-          <>
-            <Download className="w-5 h-5 mr-2" />
-            Başvuru Özetini İndir (PDF)
-          </>
-        )}
-      </Button>
-    );
-  }
+  const generatePDF = async () => {
+    if (!isClient) return;
+    
+    setIsGenerating(true);
+    setError(null);
 
-  return (
-    <PDFDownloadLink
-      document={
+    try {
+      // Dynamically import react-pdf only on client side
+      const { pdf } = await import('@react-pdf/renderer');
+      const { ArbitrationPDFDocument } = await import('./ArbitrationPDF');
+
+      // Generate PDF blob
+      const blob = await pdf(
         <ArbitrationPDFDocument
           formData={formData}
           referenceNumber={referenceNumber}
           applicantInfo={defaultApplicantInfo}
         />
-      }
-      fileName={fileName}
+      ).toBlob();
+
+      // Create download link and trigger download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('PDF başarıyla indirildi!');
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      setError(err.message);
+      toast.error('PDF oluşturulurken bir hata oluştu', {
+        description: 'Lütfen tekrar deneyin veya tarayıcınızı yenileyin'
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  if (!isClient) {
+    return (
+      <Button variant="outline" disabled className={className}>
+        <Download className="w-5 h-5 mr-2" />
+        Başvuru Özetini İndir (PDF)
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      variant="outline"
+      onClick={generatePDF}
+      disabled={isGenerating}
       className={className}
     >
-      {({ loading, error }) => {
-        if (error) {
-          toast.error('PDF oluşturulurken bir hata oluştu');
-          return (
-            <Button variant="outline" disabled className={className}>
-              <Download className="w-5 h-5 mr-2" />
-              Hata Oluştu
-            </Button>
-          );
-        }
-
-        return (
-          <Button variant="outline" disabled={loading} className={className}>
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                PDF Oluşturuluyor...
-              </>
-            ) : (
-              <>
-                <Download className="w-5 h-5 mr-2" />
-                Başvuru Özetini İndir (PDF)
-              </>
-            )}
-          </Button>
-        );
-      }}
-    </PDFDownloadLink>
+      {isGenerating ? (
+        <>
+          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+          PDF Oluşturuluyor...
+        </>
+      ) : (
+        <>
+          <Download className="w-5 h-5 mr-2" />
+          Başvuru Özetini İndir (PDF)
+        </>
+      )}
+    </Button>
   );
 }
 

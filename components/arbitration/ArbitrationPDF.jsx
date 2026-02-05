@@ -1,13 +1,4 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
-
-// Register custom font (optional, fallback to default)
-// Font.register({
-//   family: 'Roboto',
-//   src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf'
-// });
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 // PDF Styles
 const styles = StyleSheet.create({
@@ -200,7 +191,7 @@ const getDemandLabel = (type) => {
  */
 export function ArbitrationPDFDocument({ formData, referenceNumber, applicantInfo }) {
   const today = new Date().toLocaleDateString('tr-TR');
-  const refNo = referenceNumber || `THH-2024-${Date.now().toString().slice(-6)}`;
+  const refNo = referenceNumber || 'THH-2024-XXXXXX';
 
   return (
     <Document>

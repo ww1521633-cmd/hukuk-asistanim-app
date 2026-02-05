@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { SkeletonStats, SkeletonList } from '@/components/ui/Skeleton';
+import { 
+  EmptyDocumentsIllustration, 
+  ShieldAnalysisIllustration, 
+  ScalesIllustration 
+} from '@/components/ui/Illustrations';
 import { 
   FileText, 
   Shield, 
@@ -19,7 +25,9 @@ import {
 } from 'lucide-react';
 import { getUserPetitions } from '@/lib/mockData';
 
+
 export default function DashboardPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalPetitions: 0,
     totalRiskAnalyses: 0,
@@ -31,13 +39,14 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    // Load data from localStorage
-    const petitions = getUserPetitions();
-    const riskAnalyses = JSON.parse(localStorage.getItem('riskAnalysisResults') || '[]');
-    const arbitrations = JSON.parse(localStorage.getItem('arbitrationApplications') || '[]');
-    const arbitrationDraft = localStorage.getItem('arbitration-draft');
-    
-    // Check if there's an active draft
+    const loadData = async () => {
+      // Load data from localStorage
+      const petitions = getUserPetitions();
+      const riskAnalyses = JSON.parse(localStorage.getItem('riskAnalysisResults') || '[]');
+      const arbitrations = JSON.parse(localStorage.getItem('arbitrationApplications') || '[]');
+      const arbitrationDraft = localStorage.getItem('arbitration-draft');
+      
+      // Check if there's an active draft
     let draftCount = 0;
     if (arbitrationDraft) {
       try {
@@ -48,6 +57,9 @@ export default function DashboardPage() {
       } catch (e) {}
     }
 
+    // Simulate loading delay for UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+
     setStats({
       totalPetitions: petitions.length,
       totalRiskAnalyses: riskAnalyses.length,
@@ -57,6 +69,10 @@ export default function DashboardPage() {
       recentRiskAnalyses: riskAnalyses.slice(-5).reverse(),
       recentArbitrations: arbitrations.slice(-5).reverse()
     });
+    setIsLoading(false);
+    };
+    
+    loadData();
   }, []);
 
   const getRiskLevelColor = (level) => {
@@ -87,6 +103,26 @@ export default function DashboardPage() {
         return <Shield className="w-4 h-4" />;
     }
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-primary mb-2">Dashboard</h1>
+            <p className="text-gray-600">Hukuki işlemlerinizin özeti ve hızlı erişim</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <SkeletonStats />
+            <SkeletonStats />
+            <SkeletonStats />
+          </div>
+          <SkeletonList count={3} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -213,7 +249,7 @@ export default function DashboardPage() {
         )}
 
         {/* Recent THH Applications */}
-        {stats.recentArbitrations.length > 0 && (
+        {stats.recentArbitrations.length > 0 ? (
           <Card className="mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -282,10 +318,21 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+        ) : stats.totalArbitrations === 0 && stats.arbitrationDrafts === 0 ? null : (
+          <Card className="mb-8">
+            <CardContent className="py-8 text-center">
+              <ScalesIllustration className="w-24 h-24 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz THH başvurusu yok</h3>
+              <p className="text-sm text-gray-500 mb-4">Tüketici haklarınızı korumak için başvuru yapın</p>
+              <Button size="sm" asChild>
+                <Link href="/tuketici-hakem">Başvuru Yap</Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Recent Risk Analyses */}
-        {stats.recentRiskAnalyses.length > 0 && (
+        {stats.recentRiskAnalyses.length > 0 ? (
           <Card className="mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -348,10 +395,21 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+        ) : (
+          <Card className="mb-8">
+            <CardContent className="py-8 text-center">
+              <ShieldAnalysisIllustration className="w-24 h-24 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz risk analizi yok</h3>
+              <p className="text-sm text-gray-500 mb-4">Hukuki durumunuzu değerlendirmek için analiz yapın</p>
+              <Button size="sm" asChild>
+                <Link href="/risk-analizi">Risk Analizi Yap</Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Recent Petitions */}
-        {stats.recentPetitions.length > 0 && (
+        {stats.recentPetitions.length > 0 ? (
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -403,9 +461,20 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+        ) : (
+          <Card className="mb-8">
+            <CardContent className="py-8 text-center">
+              <EmptyDocumentsIllustration className="w-24 h-24 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz dilekçe yok</h3>
+              <p className="text-sm text-gray-500 mb-4">İlk dilekçenizi oluşturmaya başlayın</p>
+              <Button size="sm" asChild>
+                <Link href="/dilekce-olusturucu">Dilekçe Oluştur</Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Empty State */}
+        {/* Empty State - All sections empty */}
         {stats.totalPetitions === 0 && stats.totalRiskAnalyses === 0 && stats.totalArbitrations === 0 && (
           <Card className="border-2 border-dashed">
             <CardContent className="py-12 text-center">

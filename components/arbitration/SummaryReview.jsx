@@ -28,12 +28,14 @@ export function SummaryReview({ steps, formData, onEdit, onSubmit, isSubmitting 
   };
 
   const getFieldValue = (field, value) => {
-    if (!value && value !== false) return '—';
-
-    // Boolean
+    // Boolean - show checkmark or X
     if (field.type === 'boolean') {
-      return value ? '✅ Evet' : '❌ Hayır';
+      if (value === true) return '✓ Mevcut';
+      if (value === false) return '✗ Yok';
+      return '—';
     }
+
+    if (!value && value !== false && value !== 0) return '—';
 
     // Select
     if (field.type === 'select' && field.options) {
@@ -71,7 +73,16 @@ export function SummaryReview({ steps, formData, onEdit, onSubmit, isSubmitting 
       {/* Step Summaries */}
       {steps.map((step, stepIndex) => {
         const Icon = iconMap[step.icon] || AlertCircle;
-        const hasData = step.fields.some(field => formData[field.id]);
+        // Check if step has any data (including boolean false values)
+        const hasData = step.fields.some(field => {
+          const value = formData[field.id];
+          // For booleans, both true and false are valid data
+          if (field.type === 'boolean') {
+            return value === true || value === false;
+          }
+          // For other fields, check if value exists
+          return value !== undefined && value !== null && value !== '';
+        });
 
         return (
           <Card key={step.id} className="border-2">
@@ -102,7 +113,15 @@ export function SummaryReview({ steps, formData, onEdit, onSubmit, isSubmitting 
                 <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {step.fields.map((field) => {
                     const value = formData[field.id];
-                    if (!value && value !== false && !field.required) return null;
+                    
+                    // For boolean fields, show both true and false values
+                    if (field.type === 'boolean') {
+                      // Only skip if value was never set (undefined)
+                      if (value === undefined) return null;
+                    } else {
+                      // For non-boolean, skip empty values (unless required)
+                      if (!value && value !== 0 && !field.required) return null;
+                    }
 
                     return (
                       <div key={field.id} className="space-y-1">

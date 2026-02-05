@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { PETITION_TEMPLATES, getUserPetitions } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Scale, FileText, AlertCircle, Search, ShoppingBag, Home, XCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Scale, FileText, AlertCircle, Search, ShoppingBag, Home, XCircle, ArrowRight, CheckCircle2, Shield, Clock } from 'lucide-react';
 
 const iconMap = {
   ShoppingBag,
@@ -61,25 +61,91 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 md:py-24 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-            Hukuki İşlemlerinizi Kolaylaştırın
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
-            Yapay zeka destekli dilekçe oluşturma, risk analizi ve tüketici hakem heyeti başvuruları için
-            profesyonel hukuki asistanınız.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
-              <Link href="#templates">
-                <FileText className="w-5 h-5 mr-2" />
-                Dilekçe Oluştur
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
-              Nasıl Çalışır?
-            </Button>
+      <section className="container mx-auto px-4 py-16 md:py-24">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Left: Text Content */}
+          <div className="text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6">
+              <Scale className="w-4 h-4" />
+              Türkiye'nin Hukuki Asistanı
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+              Hukuki İşlemlerinizi <span className="text-accent">Kolaylaştırın</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              Yapay zeka destekli dilekçe oluşturma, risk analizi ve tüketici hakem heyeti başvuruları için
+              profesyonel hukuki asistanınız.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all" asChild>
+                <Link href="/dilekce-olusturucu">
+                  <FileText className="w-5 h-5 mr-2" />
+                  Ücretsiz Başla
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
+                Nasıl Çalışır?
+              </Button>
+            </div>
+            
+            {/* Trust badges */}
+            <div className="flex items-center gap-6 mt-8 justify-center md:justify-start text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                Ücretsiz
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Güvenli
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-accent" />
+                Hızlı
+              </div>
+            </div>
+          </div>
+          
+          {/* Right: Hero Image */}
+          <div className="hidden md:block relative">
+            <div className="relative">
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -left-4 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-4 -right-4 w-48 h-48 bg-accent/10 rounded-full blur-2xl" />
+              
+              {/* Main image */}
+              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                <img 
+                  src="https://images.pexels.com/photos/5669619/pexels-photo-5669619.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                  alt="Adalet terazisi - Hukuki hizmetler"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              
+              {/* Floating cards */}
+              <div className="absolute -left-6 top-1/4 bg-white rounded-xl shadow-xl p-4 z-20 animate-bounce-slow">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <FileText className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">500+</div>
+                    <div className="text-xs text-gray-500">Dilekçe</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="absolute -right-6 bottom-1/4 bg-white rounded-xl shadow-xl p-4 z-20">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Scale className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">150K TL</div>
+                    <div className="text-xs text-gray-500">THH Limiti</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -239,4 +305,3 @@ export default function HomePage() {
     </div>
   );
 }
-" // test" 

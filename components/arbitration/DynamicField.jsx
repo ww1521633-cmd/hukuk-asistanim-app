@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { HelpTooltip } from '@/components/ui/HelpTooltip';
 import { cn } from '@/lib/utils';
 
 /**
@@ -28,7 +29,8 @@ export function DynamicField({ field, value, onChange, error }) {
             onChange={(e) => handleChange(e.target.value)}
             placeholder={field.placeholder}
             className={cn(
-              'w-full',
+              'w-full transition-all',
+              'focus:ring-2 focus:ring-primary/20 focus:border-primary',
               error && 'border-red-500 focus-visible:ring-red-500'
             )}
           />
@@ -143,13 +145,13 @@ export function DynamicField({ field, value, onChange, error }) {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={field.id} className="text-sm font-medium">
-        {field.label}
-        {field.required && <span className="text-red-500 ml-1">*</span>}
-      </Label>
-      {field.help_text && (
-        <p className="text-xs text-gray-500">{field.help_text}</p>
-      )}
+      <div className="flex items-center">
+        <Label htmlFor={field.id} className="text-sm font-medium">
+          {field.label}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        {field.help_text && <HelpTooltip text={field.help_text} />}
+      </div>
       {renderField()}
       {error && (
         <p className="text-xs text-red-500">{error}</p>

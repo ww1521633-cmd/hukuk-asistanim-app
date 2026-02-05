@@ -30,6 +30,8 @@ export default function TuketiciHakemPage() {
   const [errors, setErrors] = useState({});
   const [lastSaved, setLastSaved] = useState(null);
   const [applicationId, setApplicationId] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const firstErrorRef = useRef(null);
 
   // Show draft loaded notification on mount if there's saved data
@@ -135,23 +137,35 @@ export default function TuketiciHakemPage() {
   /**
    * Handle next step navigation
    */
-  const handleNext = () => {
+  const handleNext = async () => {
     // Clear previous errors
     setErrors({});
+    setIsValidating(true);
+
+    // Simulate validation delay for UX
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     // Validate current step
     const validation = validateCurrentStep();
 
     if (!validation.isValid) {
       setErrors(validation.errors);
+      setIsValidating(false);
       toast.error('Lütfen tüm zorunlu alanları doğru şekilde doldurun', {
         description: `${Object.keys(validation.errors).length} hata bulundu`
       });
       return;
     }
 
-    // Proceed to next step
-    wizard.nextStep();
+    setIsValidating(false);
+
+    // If on last step, show summary instead of navigating
+    if (wizard.isLastStep) {
+      setShowSummary(true);
+    } else {
+      // Proceed to next step
+      wizard.nextStep();
+    }
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -186,6 +200,7 @@ export default function TuketiciHakemPage() {
     wizard.resetWizard();
     setErrors({});
     setApplicationId(null);
+    setShowSummary(false);
     router.push('/tuketici-hakem');
   };
 
@@ -286,6 +301,7 @@ export default function TuketiciHakemPage() {
    */
   const handleEditStep = (stepIndex) => {
     wizard.goToStep(stepIndex);
+    setShowSummary(false);
     setErrors({});
   };
 
@@ -300,9 +316,6 @@ export default function TuketiciHakemPage() {
       />
     );
   }
-
-  // Determine if we should show summary
-  const showSummary = wizard.isLastStep;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-accent/5">
@@ -373,7 +386,9 @@ export default function TuketiciHakemPage() {
         progress={wizard.progress}
         canGoNext={wizard.canGoNext || wizard.isLastStep}
         canGoPrev={wizard.canGoPrev}
-        isLastStep={wizard.isLastStep}
+        isLastStep={showSummary}
+        isLoading={isValidating}
+        isSubmitting={wizard.isSubmitting}
         onStepClick={handleEditStep}
         onPrev={wizard.prevStep}
         onNext={showSummary ? handleSubmit : handleNext}

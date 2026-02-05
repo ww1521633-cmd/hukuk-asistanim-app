@@ -130,7 +130,7 @@ export function THHInfoModal({ showOnFirstVisit = true }) {
           {/* Footer note */}
           <p className="text-xs text-gray-500 text-center">
             Bu bilgilendirme sadece bir kez gösterilir. Detaylı bilgi için{' '}
-            <a href="https://tuketici.ticaret.gov.tr" target="_blank" rel="noopener" className="text-primary hover:underline">
+            <a href="https://tuketici.ticaret.gov.tr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               Ticaret Bakanlığı
             </a>{' '}
             web sitesini ziyaret edebilirsiniz.

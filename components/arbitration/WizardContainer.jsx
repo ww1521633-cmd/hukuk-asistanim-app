@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react';
 import { StepIndicator } from './StepIndicator';
 
 /**
@@ -18,6 +18,8 @@ export function WizardContainer({
   canGoNext,
   canGoPrev,
   isLastStep,
+  isLoading,
+  isSubmitting,
   onStepClick,
   onPrev,
   onNext,
@@ -64,7 +66,7 @@ export function WizardContainer({
             <Button
               variant="outline"
               onClick={onPrev}
-              disabled={!canGoPrev}
+              disabled={!canGoPrev || isLoading || isSubmitting}
               className="flex-1 md:flex-none gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -72,11 +74,30 @@ export function WizardContainer({
             </Button>
             <Button
               onClick={onNext}
-              disabled={!canGoNext && !isLastStep}
+              disabled={(!canGoNext && !isLastStep) || isLoading || isSubmitting}
               className="flex-1 md:flex-none bg-primary hover:bg-primary/90 gap-2"
             >
-              {isLastStep ? 'Başvuruyu Tamamla' : 'Devam Et'}
-              <ArrowRight className="w-4 h-4" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Gönderiliyor...
+                </>
+              ) : isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Doğrulanıyor...
+                </>
+              ) : isLastStep ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Başvuruyu Tamamla
+                </>
+              ) : (
+                <>
+                  Devam Et
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>

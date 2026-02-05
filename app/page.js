@@ -47,6 +47,11 @@ export default function HomePage() {
                   Risk Analizi
                 </Link>
               </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/tuketici-hakem">
+                  THH Başvurusu
+                </Link>
+              </Button>
               <Button variant="outline" size="sm">
                 Giriş Yap
               </Button>

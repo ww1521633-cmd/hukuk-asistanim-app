@@ -13,7 +13,9 @@ import {
   ArrowRight,
   AlertCircle,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Scale,
+  FileCheck
 } from 'lucide-react';
 import { getUserPetitions } from '@/lib/mockData';
 
@@ -21,20 +23,39 @@ export default function DashboardPage() {
   const [stats, setStats] = useState({
     totalPetitions: 0,
     totalRiskAnalyses: 0,
+    totalArbitrations: 0,
+    arbitrationDrafts: 0,
     recentPetitions: [],
-    recentRiskAnalyses: []
+    recentRiskAnalyses: [],
+    recentArbitrations: []
   });
 
   useEffect(() => {
     // Load data from localStorage
     const petitions = getUserPetitions();
     const riskAnalyses = JSON.parse(localStorage.getItem('riskAnalysisResults') || '[]');
+    const arbitrations = JSON.parse(localStorage.getItem('arbitrationApplications') || '[]');
+    const arbitrationDraft = localStorage.getItem('arbitration-draft');
+    
+    // Check if there's an active draft
+    let draftCount = 0;
+    if (arbitrationDraft) {
+      try {
+        const draft = JSON.parse(arbitrationDraft);
+        if (draft.formData && Object.keys(draft.formData).length > 0 && !draft.isCompleted) {
+          draftCount = 1;
+        }
+      } catch (e) {}
+    }
 
     setStats({
       totalPetitions: petitions.length,
       totalRiskAnalyses: riskAnalyses.length,
+      totalArbitrations: arbitrations.length,
+      arbitrationDrafts: draftCount,
       recentPetitions: petitions.slice(0, 5),
-      recentRiskAnalyses: riskAnalyses.slice(-5).reverse()
+      recentRiskAnalyses: riskAnalyses.slice(-5).reverse(),
+      recentArbitrations: arbitrations.slice(-5).reverse()
     });
   }, []);
 
@@ -76,12 +97,12 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-gray-600">
-            Dilekçeleriniz ve risk analizlerinizin özeti
+            Hukuki işlemlerinizin özeti ve hızlı erişim
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        {/* Stats Grid - 3 columns */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Petitions Card */}
           <Card className="border-2 hover:shadow-lg transition-all">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -98,7 +119,7 @@ export default function DashboardPage() {
             <CardContent>
               <Button variant="outline" className="w-full gap-2" asChild>
                 <Link href="/dilekce-olusturucu">
-                  Yeni Dilekçe Oluştur
+                  Yeni Dilekçe
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -121,13 +142,147 @@ export default function DashboardPage() {
             <CardContent>
               <Button variant="outline" className="w-full gap-2" asChild>
                 <Link href="/risk-analizi">
-                  Yeni Analiz Yap
+                  Yeni Analiz
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* THH Card */}
+          <Card className="border-2 hover:shadow-lg transition-all border-primary/30">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                  {stats.totalArbitrations}
+                  {stats.arbitrationDrafts > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {stats.arbitrationDrafts} taslak
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>THH Başvurusu</CardDescription>
+              </div>
+              <div className="p-3 bg-primary/10 rounded-lg">
+                <Scale className="w-6 h-6 text-primary" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full gap-2 border-primary text-primary hover:bg-primary/10" asChild>
+                <Link href="/tuketici-hakem">
+                  {stats.arbitrationDrafts > 0 ? 'Taslağa Devam Et' : 'Yeni Başvuru'}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
             </CardContent>
           </Card>
         </div>
+
+        {/* THH Info Banner (if no applications yet) */}
+        {stats.totalArbitrations === 0 && stats.arbitrationDrafts === 0 && (
+          <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+            <CardContent className="py-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-primary/10 rounded-lg flex-shrink-0">
+                  <Scale className="w-8 h-8 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg text-primary mb-1">
+                    Tüketici Hakem Heyeti Başvurusu
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Satın aldığınız ürün veya hizmetten memnun kalmadınız mı? 
+                    2024 yılı için 150.000 TL ve altındaki tüm tüketici uyuşmazlıkları için 
+                    <strong className="text-primary"> ücretsiz</strong> olarak THH'ye başvurabilirsiniz.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
+                      <Link href="/tuketici-hakem">
+                        Başvuru Yap
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-primary">
+                      Detaylı Bilgi
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Recent THH Applications */}
+        {stats.recentArbitrations.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Scale className="w-5 h-5 text-primary" />
+                    Son THH Başvuruları
+                  </CardTitle>
+                  <CardDescription>
+                    Tüketici Hakem Heyeti başvurularınız
+                  </CardDescription>
+                </div>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/tuketici-hakem">
+                    Tümünü Gör
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {stats.recentArbitrations.map((app) => (
+                  <div
+                    key={app.id}
+                    className="flex items-center justify-between p-4 rounded-lg border-2 hover:border-primary/50 transition-all"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <FileCheck className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm">
+                          {app.formData?.firm_name || 'THH Başvurusu'}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          {app.formData?.product_name || 'Ürün/Hizmet'}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Clock className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs text-gray-500">
+                            {new Date(app.createdAt).toLocaleDateString('tr-TR')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-primary">
+                          {app.formData?.demand_amount ? `${parseInt(app.formData.demand_amount).toLocaleString('tr-TR')} TL` : '—'}
+                        </div>
+                        <div className="text-xs text-gray-500">Talep</div>
+                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className={app.status === 'completed' 
+                          ? 'bg-green-100 text-green-800 border-green-200' 
+                          : 'bg-orange-100 text-orange-800 border-orange-200'
+                        }
+                      >
+                        {app.status === 'completed' ? 'Gönderildi' : 'Taslak'}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Risk Analyses */}
         {stats.recentRiskAnalyses.length > 0 && (
@@ -251,7 +406,7 @@ export default function DashboardPage() {
         )}
 
         {/* Empty State */}
-        {stats.totalPetitions === 0 && stats.totalRiskAnalyses === 0 && (
+        {stats.totalPetitions === 0 && stats.totalRiskAnalyses === 0 && stats.totalArbitrations === 0 && (
           <Card className="border-2 border-dashed">
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
@@ -263,17 +418,25 @@ export default function DashboardPage() {
                     Henüz İçerik Yok
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Dilekçe oluşturarak veya risk analizi yaparak başlayın
+                    Hukuki işlemlerinize başlamak için aşağıdaki seçeneklerden birini kullanın
                   </p>
-                  <div className="flex gap-3 justify-center">
+                  <div className="flex flex-wrap gap-3 justify-center">
                     <Button className="bg-primary hover:bg-primary/90" asChild>
                       <Link href="/dilekce-olusturucu">
+                        <FileText className="w-4 h-4 mr-2" />
                         Dilekçe Oluştur
                       </Link>
                     </Button>
                     <Button variant="outline" asChild>
                       <Link href="/risk-analizi">
-                        Risk Analizi Yap
+                        <Shield className="w-4 h-4 mr-2" />
+                        Risk Analizi
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="border-primary text-primary hover:bg-primary/10" asChild>
+                      <Link href="/tuketici-hakem">
+                        <Scale className="w-4 h-4 mr-2" />
+                        THH Başvurusu
                       </Link>
                     </Button>
                   </div>
